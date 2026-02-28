@@ -40,9 +40,9 @@ function parseToMs(str) {
   if (!str) return null;
   str = str.trim();
 
-  // ISO format — Date.parse handles this reliably
-  if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
-    const ms = Date.parse(str);
+  // ISO format — normalize space separator to T before parsing
+  if (/^\d{4}-\d{2}-\d{2}[ T]/.test(str)) {
+    const ms = Date.parse(str.replace(" ", "T"));
     return isNaN(ms) ? null : ms;
   }
 
