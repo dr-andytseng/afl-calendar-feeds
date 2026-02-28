@@ -15,7 +15,7 @@ This project generates `.ics` calendar subscription feeds for every AFL team's 2
 - ✅ All fixtures for the 2026 AFL season
 - ✅ Match times converted to **your local timezone** automatically
 - ✅ Venue / location included for every game
-- ✅ Updated every hour from [fixturedownload.com](https://fixturedownload.com)
+- ✅ Updated every hour from [fixturedownload.com](https://fixturedownload.com/sport/aussie-rules)
 - ✅ Works with Apple Calendar, Google Calendar, Outlook, and any app that supports `.ics` subscriptions
 
 ---
@@ -95,13 +95,13 @@ Fixtures are sourced from fixturedownload.com. Finals fixtures will appear once 
 Yes! Times automatically display in your local timezone.
 
 **What's the difference between AFL and NFL?**
-AFL is **Australian Rules Football** — an entirely different sport played on an oval field, popular in Australia. NFL is American Football. This calendar is for AFL only.
+[AFL](https://www.afl.com.au) is **Australian Rules Football** — an entirely different sport played on an oval field, popular in Australia. NFL is American Football. This calendar is for AFL only.
 
 ---
 
 ## 🔧 How it works (technical)
 
-- A **GitHub Actions** workflow runs every hour and fetches the latest 2026 AFL fixture JSON from [fixturedownload.com](https://fixturedownload.com)
+- A **GitHub Actions** workflow runs every hour and fetches the latest 2026 AFL fixture JSON from [fixturedownload.com](https://fixturedownload.com/sport/aussie-rules)
 - A Node.js script converts the JSON to standard `.ics` (iCalendar) format
 - The generated files are committed to the `docs/` folder and served via **GitHub Pages**
 - Each event has a stable UID so updates replace existing calendar entries rather than creating duplicates
@@ -120,7 +120,7 @@ docs/all-teams.ics                       # combined feed for all 18 teams
 
 ## 🙏 Credits
 
-Fixture data provided by [fixturedownload.com](https://fixturedownload.com).
+Fixture data provided by [fixturedownload.com](https://fixturedownload.com/sport/aussie-rules).
 
 ---
 
