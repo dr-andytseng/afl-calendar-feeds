@@ -4,8 +4,7 @@
   "description": "Auto-generated iCalendar feeds for AFL fixtures via GitHub Actions",
   "type": "module",
   "scripts": {
-    "build": "node src/fetch-and-convert.js melbourne 2026",
-    "build:all": "node src/build-all.js"
+    "build": "node src/build-all.js 2026"
   },
   "engines": {
     "node": ">=18"
