@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Debug raw JSON
+        run: node -e "fetch('https://fixturedownload.com/feed/json/afl-2026/melbourne',{headers:{'User-Agent':'afl-ical-bot/1.0'}}).then(r=>r.json()).then(d=>console.log(JSON.stringify(d[0],null,2)))"
+
       - name: Generate melbourne.ics
         run: npm run build
         # To generate all 18 teams instead, replace with: npm run build:all
