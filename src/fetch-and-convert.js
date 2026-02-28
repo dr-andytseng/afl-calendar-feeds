@@ -83,7 +83,7 @@ function esc(v) {
 async function fetchFixtures() {
   const res = await fetch(SRC, {
     headers: { "User-Agent": "afl-ical-bot/1.0 (+https://github.com)" },
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${SRC}`);
   return res.json();
