@@ -1,0 +1,16 @@
+{
+  "name": "afl-calendar-feeds",
+  "version": "1.0.0",
+  "description": "Generate AFL team calendar .ics files from fixturedownload JSON",
+  "main": "src/fetch-and-convert.js",
+  "scripts": {
+    "build:melbourne": "node src/fetch-and-convert.js melbourne"
+  },
+  "dependencies": {
+    "ical-generator": "^4.0.0",
+    "node-fetch": "^3.4.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
