@@ -11,13 +11,13 @@ const year = process.argv[2] ?? "2026";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const TEAMS = [
-  "adelaide",
+  "adelaide-crows",
   "brisbane-lions",
   "carlton",
   "collingwood",
   "essendon",
   "fremantle",
-  "geelong",
+  "geelong-cats",
   "gold-coast-suns",
   "gws-giants",
   "hawthorn",
