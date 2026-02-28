@@ -23,16 +23,40 @@ function uid(event) {
   return createHash("sha1").update(key).digest("hex") + `@afl-${year}.ics`;
 }
 
-/** Parse "DD/MM/YYYY HH:MM" (local Melbourne time) → Date */
+/** Extract the date string from a fixture object, trying all known field names */
+function getDateStr(f) {
+  // Log all keys on first call to help debug unknown fields
+  return f.DateUtc ?? f.Date ?? f.MatchTime ?? f.DateTime ?? f.date ?? f.matchDate ?? null;
+}
+
+/** Parse various date formats → { y, m, d, hh, mm } */
 function parseDate(str) {
   if (!str) return null;
-  const [datePart, timePart] = str.trim().split(" ");
-  const [d, m, y] = datePart.split("/").map(Number);
-  const [hh, mm] = (timePart ?? "00:00").split(":").map(Number);
-  // fixturedownload times are AEDT/AEST; use a simple UTC offset heuristic:
-  // AEDT (Oct–Apr) = UTC+11, AEST (Apr–Oct) = UTC+10
-  // A proper implementation would use a TZ library; here we embed TZID instead.
-  return { y, m, d, hh, mm };
+  str = str.trim();
+
+  // Format: "DD/MM/YYYY HH:MM" (fixturedownload default)
+  const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+  if (dmy) {
+    const [, d, m, y, hh, mm] = dmy.map(Number);
+    return { y, m, d, hh, mm };
+  }
+
+  // Format: "YYYY-MM-DDTHH:MM" or "YYYY-MM-DD HH:MM" (ISO-ish)
+  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if (iso) {
+    const [, y, m, d, hh, mm] = iso.map(Number);
+    return { y, m, d, hh, mm };
+  }
+
+  // Format: "MM/DD/YYYY HH:MM" (US style fallback)
+  const mdy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+  if (mdy) {
+    const [, m, d, y, hh, mm] = mdy.map(Number);
+    return { y, m, d, hh, mm };
+  }
+
+  console.warn("  ⚠ Could not parse date:", str);
+  return null;
 }
 
 function fmtLocal({ y, m, d, hh, mm }) {
@@ -41,7 +65,7 @@ function fmtLocal({ y, m, d, hh, mm }) {
 }
 
 function fmtNow() {
-  return new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  return new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "");
 }
 
 function fold(line) {
@@ -85,7 +109,7 @@ function buildIcs(fixtures) {
   ];
 
   for (const f of fixtures) {
-    const start = parseDate(f.DateUtc ?? f.Date);
+    const start = parseDate(getDateStr(f));
     if (!start) continue;
 
     // Default match duration: 2 h 30 min
@@ -127,6 +151,7 @@ try {
   console.log(`Fetching ${URL} …`);
   const fixtures = await fetchFixtures();
   console.log(`  → ${fixtures.length} fixtures`);
+  if (fixtures.length > 0) console.log("  First fixture keys:", Object.keys(fixtures[0]).join(", "));
   const ics = buildIcs(fixtures);
   mkdirSync(join(ROOT, "docs"), { recursive: true });
   writeFileSync(OUT, ics, "utf8");
