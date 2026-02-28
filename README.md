@@ -15,19 +15,19 @@ Pick your team's URL below and add it as a **calendar subscription** (not a one-
 | 🏉 **All Teams** | `https://dr-andytseng.github.io/afl-calendar-feeds/all-teams.ics` |
 | Adelaide Crows | `https://dr-andytseng.github.io/afl-calendar-feeds/adelaide-crows.ics` |
 | Brisbane Lions | `https://dr-andytseng.github.io/afl-calendar-feeds/brisbane-lions.ics` |
-| Carlton | `https://dr-andytseng.github.io/afl-calendar-feeds/carlton.ics` |
-| Collingwood | `https://dr-andytseng.github.io/afl-calendar-feeds/collingwood.ics` |
-| Essendon | `https://dr-andytseng.github.io/afl-calendar-feeds/essendon.ics` |
-| Fremantle | `https://dr-andytseng.github.io/afl-calendar-feeds/fremantle.ics` |
+| Carlton Blues | `https://dr-andytseng.github.io/afl-calendar-feeds/carlton.ics` |
+| Collingwood Magpies | `https://dr-andytseng.github.io/afl-calendar-feeds/collingwood.ics` |
+| Essendon Bombers | `https://dr-andytseng.github.io/afl-calendar-feeds/essendon.ics` |
+| Fremantle Dockers | `https://dr-andytseng.github.io/afl-calendar-feeds/fremantle.ics` |
 | Geelong Cats | `https://dr-andytseng.github.io/afl-calendar-feeds/geelong-cats.ics` |
-| Gold Coast SUNS | `https://dr-andytseng.github.io/afl-calendar-feeds/gold-coast-suns.ics` |
+| Gold Coast Suns | `https://dr-andytseng.github.io/afl-calendar-feeds/gold-coast-suns.ics` |
 | GWS Giants | `https://dr-andytseng.github.io/afl-calendar-feeds/gws-giants.ics` |
-| Hawthorn | `https://dr-andytseng.github.io/afl-calendar-feeds/hawthorn.ics` |
-| Melbourne | `https://dr-andytseng.github.io/afl-calendar-feeds/melbourne.ics` |
-| North Melbourne | `https://dr-andytseng.github.io/afl-calendar-feeds/north-melbourne.ics` |
-| Port Adelaide | `https://dr-andytseng.github.io/afl-calendar-feeds/port-adelaide.ics` |
-| Richmond | `https://dr-andytseng.github.io/afl-calendar-feeds/richmond.ics` |
-| St Kilda | `https://dr-andytseng.github.io/afl-calendar-feeds/st-kilda.ics` |
+| Hawthorn Hawks | `https://dr-andytseng.github.io/afl-calendar-feeds/hawthorn.ics` |
+| Melbourne Demons | `https://dr-andytseng.github.io/afl-calendar-feeds/melbourne.ics` |
+| North Melbourne Kangaroos | `https://dr-andytseng.github.io/afl-calendar-feeds/north-melbourne.ics` |
+| Port Adelaide Power | `https://dr-andytseng.github.io/afl-calendar-feeds/port-adelaide.ics` |
+| Richmond Tigers | `https://dr-andytseng.github.io/afl-calendar-feeds/richmond.ics` |
+| St Kilda Saints | `https://dr-andytseng.github.io/afl-calendar-feeds/st-kilda.ics` |
 | Sydney Swans | `https://dr-andytseng.github.io/afl-calendar-feeds/sydney-swans.ics` |
 | West Coast Eagles | `https://dr-andytseng.github.io/afl-calendar-feeds/west-coast-eagles.ics` |
 | Western Bulldogs | `https://dr-andytseng.github.io/afl-calendar-feeds/western-bulldogs.ics` |
