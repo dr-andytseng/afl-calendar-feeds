@@ -1,4 +1,4 @@
-name: Update AFL Calendars
+name: Build & Update AFL Calendars
 
 on:
   schedule:
@@ -6,8 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-commit:
     runs-on: ubuntu-latest
+    outputs:
+      pushed: ${{ steps.push.outputs.pushed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,16 +27,27 @@ jobs:
       - name: Build melbourne.ics
         run: npm run build:melbourne
 
-      - name: Commit changes
+      - name: Commit docs if changed
+        id: push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git status --porcelain | grep -q docs/melbourne.ics; then
-            git add docs/melbourne.ics
-            git commit -m "chore: update melbourne.ics — $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          if git status --porcelain | grep -q docs/; then
+            git add docs
+            git commit -m "chore: update calendars — $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
             git push
+            echo "pushed=true" >> $GITHUB_OUTPUT
           else
-            echo "No changes to commit"
+            echo "pushed=false" >> $GITHUB_OUTPUT
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ensure-pages:
+    needs: build-and-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait briefly for GitHub to register the push
+        if: needs.build-and-commit.outputs.pushed == 'true'
+        run: sleep 8
+
+      - name: Trigger Pages deployment (no-op checkout)
+        uses: actions/checkout@v4
