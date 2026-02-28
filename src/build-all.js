@@ -31,10 +31,32 @@ const TEAMS = [
   "western-bulldogs",
 ];
 
+// Full display names passed to fetch-and-convert.js as the calendar title
+export const TEAM_NAMES = {
+  "adelaide-crows":    "Adelaide Crows",
+  "brisbane-lions":    "Brisbane Lions",
+  "carlton":           "Carlton Blues",
+  "collingwood":       "Collingwood Magpies",
+  "essendon":          "Essendon Bombers",
+  "fremantle":         "Fremantle Dockers",
+  "geelong-cats":      "Geelong Cats",
+  "gold-coast-suns":   "Gold Coast Suns",
+  "gws-giants":        "GWS Giants",
+  "hawthorn":          "Hawthorn Hawks",
+  "melbourne":         "Melbourne Demons",
+  "north-melbourne":   "North Melbourne Kangaroos",
+  "port-adelaide":     "Port Adelaide Power",
+  "richmond":          "Richmond Tigers",
+  "st-kilda":          "St Kilda Saints",
+  "sydney-swans":      "Sydney Swans",
+  "west-coast-eagles": "West Coast Eagles",
+  "western-bulldogs":  "Western Bulldogs",
+};
+
 let ok = 0, fail = 0;
 for (const team of TEAMS) {
   try {
-    execSync(`node ${join(__dir, "fetch-and-convert.js")} ${team} ${year}`, {
+    execSync(`node ${join(__dir, "fetch-and-convert.js")} ${team} ${year} "${TEAM_NAMES[team]}"`, {
       stdio: "inherit",
     });
     ok++;
