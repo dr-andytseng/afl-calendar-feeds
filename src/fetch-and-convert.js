@@ -12,7 +12,8 @@ const ROOT  = join(__dir, "..");
 
 const team = process.argv[2];
 const year = process.argv[3] ?? "2026";
-if (!team) { console.error("Usage: node src/fetch-and-convert.js <team> [year]"); process.exit(1); }
+const displayName = process.argv[4] ?? team;
+if (!team) { console.error("Usage: node src/fetch-and-convert.js <team> [year] [displayName]"); process.exit(1); }
 const SRC  = `https://fixturedownload.com/feed/json/afl-${year}/${team}`;
 const OUT  = join(ROOT, "docs", `${team}.ics`);
 
@@ -101,7 +102,7 @@ function buildIcs(fixtures) {
     `PRODID:-//afl-ical-bot//AFL ${year} ${team}//EN`,
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    fold(`X-WR-CALNAME:AFL ${year} – ${team.charAt(0).toUpperCase() + team.slice(1)}`),
+    fold(`X-WR-CALNAME:AFL ${year} – ${displayName}`),
     "X-WR-TIMEZONE:UTC",
   ];
 
