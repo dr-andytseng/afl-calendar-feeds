@@ -12,13 +12,14 @@ Pick your team's URL below and add it as a **calendar subscription** (not a one-
 
 | Team | Calendar URL |
 |------|-------------|
-| Adelaide Crows | `https://dr-andytseng.github.io/afl-calendar-feeds/adelaide.ics` |
+| 🏉 **All Teams** | `https://dr-andytseng.github.io/afl-calendar-feeds/all-teams.ics` |
+| Adelaide Crows | `https://dr-andytseng.github.io/afl-calendar-feeds/adelaide-crows.ics` |
 | Brisbane Lions | `https://dr-andytseng.github.io/afl-calendar-feeds/brisbane-lions.ics` |
 | Carlton | `https://dr-andytseng.github.io/afl-calendar-feeds/carlton.ics` |
 | Collingwood | `https://dr-andytseng.github.io/afl-calendar-feeds/collingwood.ics` |
 | Essendon | `https://dr-andytseng.github.io/afl-calendar-feeds/essendon.ics` |
 | Fremantle | `https://dr-andytseng.github.io/afl-calendar-feeds/fremantle.ics` |
-| Geelong Cats | `https://dr-andytseng.github.io/afl-calendar-feeds/geelong.ics` |
+| Geelong Cats | `https://dr-andytseng.github.io/afl-calendar-feeds/geelong-cats.ics` |
 | Gold Coast SUNS | `https://dr-andytseng.github.io/afl-calendar-feeds/gold-coast-suns.ics` |
 | GWS Giants | `https://dr-andytseng.github.io/afl-calendar-feeds/gws-giants.ics` |
 | Hawthorn | `https://dr-andytseng.github.io/afl-calendar-feeds/hawthorn.ics` |
