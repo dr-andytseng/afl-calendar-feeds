@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // Fetches AFL fixture JSON for a team and writes an iCalendar (.ics) file.
 // Usage: node src/fetch-and-convert.js [team] [year]
-//   Defaults: team=melbourne, year=2026
 
 import { createHash } from "crypto";
 import { writeFileSync, mkdirSync } from "fs";
@@ -9,154 +8,149 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dir, "..");
+const ROOT  = join(__dir, "..");
 
 const team = process.argv[2] ?? "melbourne";
 const year = process.argv[3] ?? "2026";
-const URL  = `https://fixturedownload.com/feed/json/afl-${year}/${team}`;
+const SRC  = `https://fixturedownload.com/feed/json/afl-${year}/${team}`;
 const OUT  = join(ROOT, "docs", `${team}.ics`);
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
-function uid(event) {
-  const key = `${event.RoundNumber}-${event.HomeTeam}-${event.AwayTeam}-${year}`;
+function uid(f) {
+  const key = `${year}-${f.RoundNumber}-${f.HomeTeam}-${f.AwayTeam}`;
   return createHash("sha1").update(key).digest("hex") + `@afl-${year}.ics`;
 }
 
-/** Extract the date string from a fixture object, trying all known field names */
+/**
+ * fixturedownload DateUtc field looks like "2026-03-14T13:15:00Z"
+ * Fall back to other field names just in case.
+ */
 function getDateStr(f) {
-  // Log all keys on first call to help debug unknown fields
-  return f.DateUtc ?? f.Date ?? f.MatchTime ?? f.DateTime ?? f.date ?? f.matchDate ?? null;
+  return f.DateUtc ?? f.DateUTC ?? f.Date ?? f.MatchTime ?? f.DateTime ?? null;
 }
 
-/** Parse various date formats → { y, m, d, hh, mm } */
-function parseDate(str) {
+/**
+ * Parse date string → UTC milliseconds.
+ * Handles:
+ *   ISO:        "2026-03-14T13:15:00Z"  or  "2026-03-14T13:15:00+11:00"
+ *   DD/MM/YYYY: "14/03/2026 13:15"  (treated as UTC per fixturedownload docs)
+ */
+function parseToMs(str) {
   if (!str) return null;
   str = str.trim();
 
-  // Format: "DD/MM/YYYY HH:MM" (fixturedownload default)
-  const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-  if (dmy) {
-    const [, d, m, y, hh, mm] = dmy.map(Number);
-    return { y, m, d, hh, mm };
+  // ISO format — Date.parse handles this reliably
+  if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
+    const ms = Date.parse(str);
+    return isNaN(ms) ? null : ms;
   }
 
-  // Format: "YYYY-MM-DDTHH:MM" or "YYYY-MM-DD HH:MM" (ISO-ish)
-  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
-  if (iso) {
-    const [, y, m, d, hh, mm] = iso.map(Number);
-    return { y, m, d, hh, mm };
+  // DD/MM/YYYY HH:MM  — fixturedownload serves UTC times in this format too
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+  if (m) {
+    const [, d, mo, y, hh, mm] = m.map(Number);
+    return Date.UTC(y, mo - 1, d, hh, mm);
   }
 
-  // Format: "MM/DD/YYYY HH:MM" (US style fallback)
-  const mdy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-  if (mdy) {
-    const [, m, d, y, hh, mm] = mdy.map(Number);
-    return { y, m, d, hh, mm };
-  }
-
-  console.warn("  ⚠ Could not parse date:", str);
   return null;
 }
 
-function fmtLocal({ y, m, d, hh, mm }) {
-  const pad = n => String(n).padStart(2, "0");
-  return `${y}${pad(m)}${pad(d)}T${pad(hh)}${pad(mm)}00`;
+/** Format ms timestamp as iCal UTC string e.g. 20260314T131500Z */
+function toUtcStamp(ms) {
+  return new Date(ms).toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
 }
 
-function fmtNow() {
-  return new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "");
+function nowUtc() {
+  return new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
 }
 
+/** RFC 5545 line folding at 75 octets */
 function fold(line) {
-  // RFC 5545: fold lines > 75 octets
   const out = [];
-  while (line.length > 75) {
-    out.push(line.slice(0, 75));
-    line = " " + line.slice(75);
-  }
+  while (line.length > 75) { out.push(line.slice(0, 75)); line = " " + line.slice(75); }
   out.push(line);
   return out.join("\r\n");
 }
 
-function esc(str) {
-  return String(str ?? "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+function esc(v) {
+  return String(v ?? "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
 }
 
 // ── fetch ──────────────────────────────────────────────────────────────────
 
 async function fetchFixtures() {
-  const res = await fetch(URL, {
+  const res = await fetch(SRC, {
     headers: { "User-Agent": "afl-ical-bot/1.0 (+https://github.com)" },
-    signal: AbortSignal.timeout(15_000),
+    signal: AbortSignal.timeout(20_000),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} from ${URL}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${SRC}`);
   return res.json();
 }
 
 // ── build ICS ──────────────────────────────────────────────────────────────
 
 function buildIcs(fixtures) {
-  const dtstamp = fmtNow();
+  const dtstamp = nowUtc();
+  const MATCH_DURATION_MS = 150 * 60_000; // 2 h 30 min
+
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     `PRODID:-//afl-ical-bot//AFL ${year} ${team}//EN`,
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    `X-WR-CALNAME:AFL ${year} – ${team.charAt(0).toUpperCase() + team.slice(1)}`,
-    "X-WR-TIMEZONE:Australia/Melbourne",
+    fold(`X-WR-CALNAME:AFL ${year} – ${team.charAt(0).toUpperCase() + team.slice(1)}`),
+    "X-WR-TIMEZONE:UTC",
   ];
 
+  let skipped = 0;
   for (const f of fixtures) {
-    const start = parseDate(getDateStr(f));
-    if (!start) continue;
+    const startMs = parseToMs(getDateStr(f));
+    if (startMs === null) { skipped++; continue; }
 
-    // Default match duration: 2 h 30 min
-    const endDate = new Date(
-      Date.UTC(start.y, start.m - 1, start.d, start.hh, start.mm) + 150 * 60_000
-    );
-    const endObj = {
-      y: endDate.getUTCFullYear(), m: endDate.getUTCMonth() + 1,
-      d: endDate.getUTCDate(), hh: endDate.getUTCHours(), mm: endDate.getUTCMinutes(),
-    };
-
-    const home   = esc(f.HomeTeam);
-    const away   = esc(f.AwayTeam);
+    const endMs  = startMs + MATCH_DURATION_MS;
+    const home   = esc(f.HomeTeam ?? "");
+    const away   = esc(f.AwayTeam ?? "");
     const venue  = esc(f.Location ?? f.Venue ?? "");
-    const round  = esc(f.RoundNumber != null ? `Round ${f.RoundNumber}` : f.RoundLabel ?? "");
-    const result = f.HomeTeamScore != null
-      ? ` (${f.HomeTeamScore}–${f.AwayTeamScore})` : "";
+    const round  = f.RoundNumber != null ? `Round ${f.RoundNumber}` : (f.RoundLabel ?? "");
+    const result = f.HomeTeamScore != null ? ` (${f.HomeTeamScore}–${f.AwayTeamScore})` : "";
 
     lines.push(
       "BEGIN:VEVENT",
       fold(`UID:${uid(f)}`),
-      fold(`DTSTAMP:${dtstamp}Z`),
-      fold(`DTSTART;TZID=Australia/Melbourne:${fmtLocal(start)}`),
-      fold(`DTEND;TZID=Australia/Melbourne:${fmtLocal(endObj)}`),
+      fold(`DTSTAMP:${dtstamp}`),
+      fold(`DTSTART:${toUtcStamp(startMs)}`),
+      fold(`DTEND:${toUtcStamp(endMs)}`),
       fold(`SUMMARY:${home} v ${away}${result}`),
       fold(`LOCATION:${venue}`),
-      fold(`DESCRIPTION:${round} – ${home} v ${away}${result}`),
+      fold(`DESCRIPTION:${esc(round)} – ${home} v ${away}${result}`),
       "END:VEVENT",
     );
   }
 
   lines.push("END:VCALENDAR");
+  if (skipped) console.warn(`  ⚠ Skipped ${skipped} fixtures with unparseable dates`);
   return lines.join("\r\n") + "\r\n";
 }
 
 // ── main ───────────────────────────────────────────────────────────────────
 
 try {
-  console.log(`Fetching ${URL} …`);
+  console.log(`Fetching ${SRC} …`);
   const fixtures = await fetchFixtures();
-  console.log(`  → ${fixtures.length} fixtures`);
-  if (fixtures.length > 0) console.log("  First fixture keys:", Object.keys(fixtures[0]).join(", "));
+  console.log(`  → ${fixtures.length} fixtures received`);
+
+  // Debug: show the raw first fixture so we can verify field names
+  if (fixtures.length > 0) {
+    console.log("  First fixture sample:", JSON.stringify(fixtures[0], null, 2));
+  }
+
   const ics = buildIcs(fixtures);
   mkdirSync(join(ROOT, "docs"), { recursive: true });
   writeFileSync(OUT, ics, "utf8");
-  console.log(`Written: ${OUT}`);
+  console.log(`  ✓ Written: ${OUT}`);
 } catch (err) {
-  console.error("Error:", err.message);
+  console.error("Fatal error:", err.message);
   process.exit(1);
 }
