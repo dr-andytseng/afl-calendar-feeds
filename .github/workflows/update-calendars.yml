@@ -40,5 +40,6 @@ jobs:
           else
             TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             git commit -m "chore: update ics files — ${TIMESTAMP}"
+            git pull --rebase
             git push
           fi
