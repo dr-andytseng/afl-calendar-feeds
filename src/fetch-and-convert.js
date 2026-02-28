@@ -10,8 +10,9 @@ import { fileURLToPath } from "url";
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = join(__dir, "..");
 
-const team = process.argv[2] ?? "melbourne";
+const team = process.argv[2];
 const year = process.argv[3] ?? "2026";
+if (!team) { console.error("Usage: node src/fetch-and-convert.js <team> [year]"); process.exit(1); }
 const SRC  = `https://fixturedownload.com/feed/json/afl-${year}/${team}`;
 const OUT  = join(ROOT, "docs", `${team}.ics`);
 
