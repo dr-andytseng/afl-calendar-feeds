@@ -1,7 +1,7 @@
 # AFL Calendar Feeds 📅
 ### Free 2026 Australian Rules Football Fixture Calendars for All 18 Teams
 
-Never miss a game! Subscribe to live **[AFL (Australian Football League)](https://www.afl.com.au) 2026 fixture calendars** for all 18 teams — automatically updated every hour so you always have the latest match times, venues, and results in your calendar.
+Never miss a game! Subscribe to live **[AFL (Australian Football League)](https://www.afl.com.au) 2026 fixture calendars** for all 18 teams — automatically updated every hour so you always have the latest match times and venues in your calendar.
 
 > ⚠️ This is **AFL — Australian Rules Football**, not American football (NFL).
 
