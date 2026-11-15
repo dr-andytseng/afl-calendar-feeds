@@ -1,10 +1,11 @@
 {
   "name": "afl-calendars",
   "version": "1.0.0",
-  "description": "Auto-generated iCalendar feeds for AFL fixtures via GitHub Actions",
+  "description": "Auto-generated iCalendar feeds for AFL and AFLW fixtures via GitHub Actions",
   "type": "module",
   "scripts": {
-    "build": "node src/build-all.js 2026"
+    "build": "node src/build.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18"
