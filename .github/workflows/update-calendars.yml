@@ -1,4 +1,4 @@
-name: Update AFL Calendars
+name: Update AFL & AFLW Calendars
 
 on:
   schedule:
@@ -6,7 +6,13 @@ on:
   workflow_dispatch:       # manual trigger from Actions tab
 
 permissions:
-  contents: write          # allow the job to push back to the repo
+  contents: write          # allow the job to push generated calendars to main
+  pages: write             # allow explicitly requesting a GitHub Pages build
+
+# One run at a time; queued runs are never cancelled mid-publish.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -16,18 +22,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node 20
+      - name: Set up Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
-      - name: Debug raw JSON
-        run: node -e "fetch('https://fixturedownload.com/feed/json/afl-2026/melbourne',{headers:{'User-Agent':'afl-ical-bot/1.0'}}).then(r=>r.json()).then(d=>console.log(JSON.stringify(d[0],null,2)))"
+      - name: Run tests
+        run: npm test
 
-      - name: Generate all team .ics files
+      - name: Generate all calendar files (staged, validated)
         run: npm run build
 
+      # Only the default branch may publish generated calendars.
+      # A manual run on a feature branch builds and tests but never pushes.
+      # `git push` is never forced; a rebase conflict fails the job safely.
       - name: Commit and push if changed
+        id: publish
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -37,9 +48,27 @@ jobs:
           # Only commit when there are actual changes
           if git diff --cached --quiet; then
             echo "No changes to commit."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             git commit -m "chore: update ics files — ${TIMESTAMP}"
             git pull --rebase
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # Commits pushed with GITHUB_TOKEN do not trigger a new Pages build
+      # (https://docs.github.com/en/actions/concepts/security/github_token).
+      # Legacy branch-source publishing has historically still rebuilt on this
+      # repo's bot pushes, but we do not rely on undocumented behaviour:
+      # explicitly request a build of the default branch. retains the existing
+      # branch-based main/docs publishing model. No settings change, no PAT.
+      - name: Request GitHub Pages build
+        if: github.ref == 'refs/heads/main' && steps.publish.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api --fail -X POST "repos/${{ github.repository }}/pages/builds" --jq '.status'
+
+      - name: Skip publish (not on main)
+        if: github.ref != 'refs/heads/main'
+        run: echo "Build and tests succeeded, but publishing only happens from main. Skipping push."

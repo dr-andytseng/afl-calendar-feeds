@@ -1,0 +1,28 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 24 (active LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      # No dependencies and no lockfile — no npm ci, no caching, no install step.
+      # Tests do not fetch live fixture sources and must stay offline.
+      - name: Run tests
+        run: npm test
