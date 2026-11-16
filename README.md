@@ -24,29 +24,31 @@ This project generates `.ics` calendar subscription feeds for every club's seaso
 
 ## 📲 How to subscribe
 
+> ⚠️ **Men's AFL subscription URLs changed upon deployment of this update.** Existing men's subscriptions point at old root-level URLs, which **will no longer work**. You must **re-subscribe using the new `/afl/` URLs** (e.g. `https://dr-andytseng.github.io/afl-calendar-feeds/afl/all-teams.ics`). AFLW subscriptions are unaffected — AFLW URLs are unchanged.
+
 ### AFL 2027 (men's)
 
 | Team | Subscribe URL |
 |------|--------------|
-| 🏉 **All Teams** | `https://dr-andytseng.github.io/afl-calendar-feeds/all-teams.ics` |
-| Adelaide Crows | `https://dr-andytseng.github.io/afl-calendar-feeds/adelaide-crows.ics` |
-| Brisbane Lions | `https://dr-andytseng.github.io/afl-calendar-feeds/brisbane-lions.ics` |
-| Carlton Blues | `https://dr-andytseng.github.io/afl-calendar-feeds/carlton.ics` |
-| Collingwood Magpies | `https://dr-andytseng.github.io/afl-calendar-feeds/collingwood.ics` |
-| Essendon Bombers | `https://dr-andytseng.github.io/afl-calendar-feeds/essendon.ics` |
-| Fremantle Dockers | `https://dr-andytseng.github.io/afl-calendar-feeds/fremantle.ics` |
-| Geelong Cats | `https://dr-andytseng.github.io/afl-calendar-feeds/geelong-cats.ics` |
-| Gold Coast Suns | `https://dr-andytseng.github.io/afl-calendar-feeds/gold-coast-suns.ics` |
-| GWS Giants | `https://dr-andytseng.github.io/afl-calendar-feeds/gws-giants.ics` |
-| Hawthorn Hawks | `https://dr-andytseng.github.io/afl-calendar-feeds/hawthorn.ics` |
-| Melbourne Demons | `https://dr-andytseng.github.io/afl-calendar-feeds/melbourne.ics` |
-| North Melbourne Kangaroos | `https://dr-andytseng.github.io/afl-calendar-feeds/north-melbourne.ics` |
-| Port Adelaide Power | `https://dr-andytseng.github.io/afl-calendar-feeds/port-adelaide.ics` |
-| Richmond Tigers | `https://dr-andytseng.github.io/afl-calendar-feeds/richmond.ics` |
-| St Kilda Saints | `https://dr-andytseng.github.io/afl-calendar-feeds/st-kilda.ics` |
-| Sydney Swans | `https://dr-andytseng.github.io/afl-calendar-feeds/sydney-swans.ics` |
-| West Coast Eagles | `https://dr-andytseng.github.io/afl-calendar-feeds/west-coast-eagles.ics` |
-| Western Bulldogs | `https://dr-andytseng.github.io/afl-calendar-feeds/western-bulldogs.ics` |
+| 🏉 **All Teams** | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/all-teams.ics` |
+| Adelaide Crows | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/adelaide-crows.ics` |
+| Brisbane Lions | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/brisbane-lions.ics` |
+| Carlton Blues | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/carlton.ics` |
+| Collingwood Magpies | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/collingwood.ics` |
+| Essendon Bombers | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/essendon.ics` |
+| Fremantle Dockers | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/fremantle.ics` |
+| Geelong Cats | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/geelong-cats.ics` |
+| Gold Coast Suns | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/gold-coast-suns.ics` |
+| GWS Giants | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/gws-giants.ics` |
+| Hawthorn Hawks | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/hawthorn.ics` |
+| Melbourne Demons | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/melbourne.ics` |
+| North Melbourne Kangaroos | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/north-melbourne.ics` |
+| Port Adelaide Power | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/port-adelaide.ics` |
+| Richmond Tigers | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/richmond.ics` |
+| St Kilda Saints | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/st-kilda.ics` |
+| Sydney Swans | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/sydney-swans.ics` |
+| West Coast Eagles | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/west-coast-eagles.ics` |
+| Western Bulldogs | `https://dr-andytseng.github.io/afl-calendar-feeds/afl/western-bulldogs.ics` |
 
 ### AFLW 2026 (women's)
 
@@ -154,8 +156,8 @@ src/lib/ics.js                           # RFC 5545 escaping, UTF-8-aware foldin
 src/lib/build-competition.js             # club + aggregate calendar derivation
 src/lib/validate-output.js               # staged-output validation gate
 test/                                    # node:test unit tests (no framework)
-docs/<team>.ics                          # generated AFL 2027 club feeds
-docs/all-teams.ics                       # generated AFL 2027 aggregate
+docs/afl/<team>.ics                      # generated AFL 2027 club feeds
+docs/afl/all-teams.ics                   # generated AFL 2027 aggregate
 docs/aflw/<team>.ics                     # generated AFLW 2026 club feeds
 docs/aflw/all-teams.ics                  # generated AFLW 2026 aggregate
 docs/index.html                          # GitHub Pages landing page

@@ -13,8 +13,8 @@ export const COMPETITIONS = [
     sourceUrl: "https://fixturedownload.com/feed/json/afl-2027",
     // Men's AFL matches are typically ~2–2.5 h including breaks; 150 min is an estimate.
     estimatedDurationMinutes: 150,
-    // Output paths are relative to docs/. Men's public paths must remain unchanged.
-    outputDir: "",
+    // Output paths are relative to docs/. AFL feeds are published under /afl/.
+    outputDir: "afl",
     aggregateSlug: "all-teams",
     aggregateCalName: "AFL 2027 – All Teams",
     prodid: "-//afl-ical-bot//AFL 2027 All Teams//EN",
