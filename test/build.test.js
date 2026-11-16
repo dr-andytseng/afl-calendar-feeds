@@ -116,10 +116,10 @@ function fixture(n, home, away) {
 test("two unknown participants: aggregate only, not in any club feed", () => {
   const matches = validateFixtures([fixture(1, "Winner of PF1", "Winner of PF2")], opts);
   const outputs = buildCompetitionOutputs(matches, AFL, DTSTAMP);
-  const aggregate = outputs.find((o) => o.relativePath === "all-teams.ics");
+  const aggregate = outputs.find((o) => o.relativePath === "afl/all-teams.ics");
   assert.match(aggregate.ics, /Winner of PF1/);
   for (const o of outputs) {
-    if (o.relativePath === "all-teams.ics") continue;
+    if (o.relativePath === "afl/all-teams.ics") continue;
     assert.doesNotMatch(o.ics, /Winner of PF1/, `${o.relativePath} should not contain the fixture`);
   }
 });
@@ -129,7 +129,7 @@ test("one known club + placeholder: aggregate plus the known club's feed only", 
   const outputs = buildCompetitionOutputs(matches, AFL, DTSTAMP);
   for (const o of outputs) {
     const has = /Melbourne v Winner of PF1/.test(o.ics);
-    if (o.relativePath === "all-teams.ics" || o.relativePath === "melbourne.ics") {
+    if (o.relativePath === "afl/all-teams.ics" || o.relativePath === "afl/melbourne.ics") {
       assert.ok(has, `${o.relativePath} should contain the fixture`);
     } else {
       assert.ok(!has, `${o.relativePath} should NOT contain the fixture`);
@@ -142,7 +142,7 @@ test("two known clubs: aggregate plus both club feeds", () => {
   const outputs = buildCompetitionOutputs(matches, AFL, DTSTAMP);
   for (const o of outputs) {
     const has = /Melbourne v Carlton/.test(o.ics);
-    if (["all-teams.ics", "melbourne.ics", "carlton.ics"].includes(o.relativePath)) {
+    if (["afl/all-teams.ics", "afl/melbourne.ics", "afl/carlton.ics"].includes(o.relativePath)) {
       assert.ok(has, `${o.relativePath} should contain the fixture`);
     } else {
       assert.ok(!has, `${o.relativePath} should NOT contain the fixture`);
@@ -164,7 +164,7 @@ test("buildCompetitionOutputs produces 19 files per competition with correct pat
   const aflw = buildCompetitionOutputs(matches, AFLW, DTSTAMP).map((o) => o.relativePath).sort();
   assert.equal(afl.length, 19);
   assert.equal(aflw.length, 19);
-  assert.ok(afl.includes("all-teams.ics"));
+  assert.ok(afl.includes("afl/all-teams.ics"));
   assert.ok(aflw.includes("aflw/all-teams.ics"));
   assert.ok(aflw.includes("aflw/melbourne.ics"));
   assert.ok(!afl.some((p) => p.startsWith("aflw/")));
@@ -172,7 +172,7 @@ test("buildCompetitionOutputs produces 19 files per competition with correct pat
 
 test("estimated durations and labels come from competition config", () => {
   const matches = validateFixtures([fixture(1, "Melbourne", "Carlton")], opts);
-  const afl = buildCompetitionOutputs(matches, AFL, DTSTAMP).find((o) => o.relativePath === "melbourne.ics");
+  const afl = buildCompetitionOutputs(matches, AFL, DTSTAMP).find((o) => o.relativePath === "afl/melbourne.ics");
   assert.match(afl.ics, /DTEND:20270317T110000Z/); // 08:30 + 150 min
   assert.match(afl.ics, /X-WR-CALNAME:AFL 2027 – /);
   const aflwMatches = validateFixtures(
@@ -188,7 +188,7 @@ test("estimated durations and labels come from competition config", () => {
 test("score presentation matches existing style for completed matches", () => {
   const played = { ...fixture(1, "Melbourne", "St Kilda"), HomeTeamScore: 120, AwayTeamScore: 107 };
   const matches = validateFixtures([played], opts);
-  const { ics } = buildCompetitionOutputs(matches, AFL, DTSTAMP).find((o) => o.relativePath === "melbourne.ics");
+  const { ics } = buildCompetitionOutputs(matches, AFL, DTSTAMP).find((o) => o.relativePath === "afl/melbourne.ics");
   assert.match(ics, /SUMMARY:Melbourne v St Kilda \(120–107\)/);
   assert.match(ics, /DESCRIPTION:Round 1 – Melbourne v St Kilda \(120–107\)/);
 });

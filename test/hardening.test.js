@@ -51,7 +51,7 @@ test("validateFixtures rejects a rolled-over date", () => {
 test("unplayed fixtures render no score suffix and no null/undefined", () => {
   const matches = validateFixtures([fixture(1, "Melbourne", "Carlton")], opts);
   const { ics } = buildCompetitionOutputs(matches, AFL, DTSTAMP)
-    .find((o) => o.relativePath === "melbourne.ics");
+    .find((o) => o.relativePath === "afl/melbourne.ics");
   assert.match(ics, /SUMMARY:Melbourne v Carlton\r\n/);
   assert.doesNotMatch(ics, /\(null/);
   assert.doesNotMatch(ics, /undefined/);
@@ -64,7 +64,7 @@ test("completed fixtures render both scores", () => {
     opts,
   );
   const { ics } = buildCompetitionOutputs(matches, AFL, DTSTAMP)
-    .find((o) => o.relativePath === "melbourne.ics");
+    .find((o) => o.relativePath === "afl/melbourne.ics");
   assert.match(ics, /SUMMARY:Melbourne v Carlton \(50–40\)/);
 });
 
@@ -92,9 +92,9 @@ test("every club-feed UID also appears in the aggregate", () => {
   );
   const outputs = buildCompetitionOutputs(matches, AFL, DTSTAMP);
   const uid = (ics) => [...ics.matchAll(/^UID:(.+)$/gm)].map((m) => m[1].trim());
-  const agg = new Set(uid(outputs.find((o) => o.relativePath === "all-teams.ics").ics));
+  const agg = new Set(uid(outputs.find((o) => o.relativePath === "afl/all-teams.ics").ics));
   for (const o of outputs) {
-    if (o.relativePath === "all-teams.ics") continue;
+    if (o.relativePath === "afl/all-teams.ics") continue;
     for (const id of uid(o.ics)) assert.ok(agg.has(id), `${id} missing from aggregate`);
   }
   // and the aggregate contains all three matches
@@ -116,7 +116,7 @@ test("both competitions produce exactly the expected 38 paths", () => {
     "geelong-cats","gold-coast-suns","gws-giants","hawthorn","melbourne","north-melbourne",
     "port-adelaide","richmond","st-kilda","sydney-swans","west-coast-eagles","western-bulldogs",
   ];
-  assert.deepEqual(aflPaths, [...clubs.map((c) => `${c}.ics`), "all-teams.ics"].sort());
+  assert.deepEqual(aflPaths, [...clubs.map((c) => `afl/${c}.ics`), "afl/all-teams.ics"].sort());
   assert.deepEqual(aflwPaths, [...clubs.map((c) => `aflw/${c}.ics`), "aflw/all-teams.ics"].sort());
   assert.equal(aflPaths.length + aflwPaths.length, 38);
 });
